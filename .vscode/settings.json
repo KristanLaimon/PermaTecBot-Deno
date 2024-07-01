@@ -1,0 +1,10 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "database": "${workspaceFolder:permatecbot deno}/resources/permabotdb.db",
+      "name": "test"
+    }
+  ]
+}
