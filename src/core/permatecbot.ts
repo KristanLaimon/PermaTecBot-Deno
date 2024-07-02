@@ -3,7 +3,7 @@
 //Dependencies
 import path from "node:path";
 
-import { Bot, InputFile } from "npm:grammy";
+import { Bot, InputFile } from "https://deno.land/x/grammy/mod.ts";
 
 //View Layer
 import { setupAllFuncionalityBot } from "./command_center.ts";
@@ -28,7 +28,7 @@ export default class PermaTecBot extends Bot {
     super(tokenAPI);
     setupAllFuncionalityBot(this).then(() => {
       Time.setupLocaleTimeConfig();
-      // Time.setupDailyTask(this.dailyBotTask.bind(this));
+      Time.setupDailyTask(this.dailyBotTask.bind(this));
     });
   }
 

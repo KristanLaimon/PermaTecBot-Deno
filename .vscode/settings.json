@@ -6,5 +6,6 @@
       "database": "${workspaceFolder:permatecbot deno}/resources/permabotdb.db",
       "name": "test"
     }
-  ]
+  ],
+  "files.exclude": {}
 }

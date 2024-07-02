@@ -1,5 +1,5 @@
 //Dependencies
-import { Context, InlineKeyboard } from "npm:grammy";
+import { Context, InlineKeyboard } from "https://deno.land/x/grammy/mod.ts";
 
 //View Layer
 import PermaTecBot from "../permatecbot.ts";
@@ -8,14 +8,16 @@ import PermaTecBot from "../permatecbot.ts";
 import Subscriptions from "../../controller/subscriptions.ts";
 import DbCache from "../../controller/db_cache.ts";
 import { UserClickedSuscribedButton } from "../../controller/waiting.ts";
-import { CommandModule } from "../../types/command_module.d.ts";
+import { FullCommandModule } from "../../types/command_module.d.ts";
 
 const timeSpan = DbCache.Config.WatingReponseTimeSpan / 1000;
 
-export default class Start implements CommandModule {
+export default class Start implements FullCommandModule {
   command(bot: PermaTecBot) {
     bot.command("start", (ctx) => {
       init(ctx);
+    }).hears("", (ctx) => {
+      ctx.reply("Reconocí el siguiente mensajeee");
     });
   }
 
@@ -29,7 +31,7 @@ export default class Start implements CommandModule {
 
 function init(ctx: Context) {
   const foundStartMsg = DbCache.Config.BotMessages.find(
-    (msg) => msg.Title === "start"
+    (msg) => msg.Title === "start",
   );
 
   if (foundStartMsg) {
@@ -50,7 +52,7 @@ function Subscribe(ctx: Context) {
 
   if (UserClickedSuscribedButton(chatId, ctx)) {
     ctx.reply(
-      `⏳ Por favor, espera ${timeSpan} segundos antes de intentar suscribirte de nuevo. ⏳`
+      `⏳ Por favor, espera ${timeSpan} segundos antes de intentar suscribirte de nuevo. ⏳`,
     );
     ctx.answerCallbackQuery();
     return;
@@ -63,7 +65,7 @@ function Subscribe(ctx: Context) {
     ctx.reply("🟨 Ya se ha suscrito  🟨", {
       reply_markup: new InlineKeyboard().text(
         "Desuscribirse?",
-        "desubscription-server"
+        "desubscription-server",
       ),
     });
   } else {
@@ -77,7 +79,7 @@ function Unsubscribe(ctx: Context) {
   if (ctx.chat) {
     if (UserClickedSuscribedButton(ctx.chat.id, ctx)) {
       ctx.reply(
-        `⏳ Por favor, espera ${timeSpan} segundos antes de intentar desuscribirte de nuevo. ⏳`
+        `⏳ Por favor, espera ${timeSpan} segundos antes de intentar desuscribirte de nuevo. ⏳`,
       );
       ctx.answerCallbackQuery();
       return;

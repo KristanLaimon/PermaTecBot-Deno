@@ -1,5 +1,7 @@
+import * as path from "https://deno.land/std/path/mod.ts";
+import { Context, InputFile } from "https://deno.land/x/grammy/mod.ts";
+
 import DbCache from "../../controller/db_cache.ts";
-import { Context, InputFile } from "npm:grammy";
 import PermaTecBot from "../permatecbot.ts";
 
 //@deno-types="npm:@types/node"
@@ -16,11 +18,17 @@ export default class Rules implements CommandModule {
 
 function rules(ctx: Context) {
   ctx
-    .replyWithPhoto(new InputFile("./imgs/logo.jpg"), {
-      caption: "Reglamento e Información",
-    })
+    .replyWithPhoto(
+      new InputFile(path.join(DbCache.Config.ImagesPath, "logo.jpg")),
+      {
+        caption: "Reglamento e Información",
+      }
+    )
     .then(() => {
       const rulesText = fs.readFileSync(DbCache.Config.RulesPath);
       ctx.reply(rulesText.toString());
+    })
+    .catch((reason) => {
+      let help = "";
     });
 }

@@ -25,6 +25,4 @@ export default class Send implements CommandModule {
       });
     });
   }
-  events() {}
-  filter() {}
 }

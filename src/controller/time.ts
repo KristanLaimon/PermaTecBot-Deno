@@ -1,6 +1,3 @@
-// // @deno-types="npm:@types/node-cron"
-// import npmcron from "npm:node-cron";
-
 import moment from "npm:moment";
 import DbCache from "./db_cache.ts";
 
@@ -14,11 +11,11 @@ export default class Time {
    * Format: 24Hrs
    * @returns
    */
-  // static setupDailyTask(dailyCallBack: () => void) {
-  //   npmcron.schedule(`0 0 * * *`, () => {
-  //     dailyCallBack();
-  //   });
-  // }
+  static setupDailyTask(dailyCallBack: () => void) {
+    Deno.cron("dailytask", `0 0 * * *`, () => {
+      dailyCallBack();
+    });
+  }
 
   static setupTestTask(dailyCallBack: () => void) {
     setInterval(() => {
@@ -31,7 +28,9 @@ export default class Time {
    * @returns number days from starting day 1
    */
   static getDaysFromStartingDate(): number {
-    const startingDay = moment(DbCache.Config.StartingDay);
+    const startingDay = moment(
+      Deno.env.get("STARTING_DAY") || DbCache.Config.StartingDay
+    );
     const today = moment();
     return today.diff(startingDay, "days") + 1;
   }

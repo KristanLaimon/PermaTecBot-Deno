@@ -1,9 +1,9 @@
 // Dependencies
-import path from "node:path";
+import * as path from "https://deno.land/std@0.94.0/path/mod.ts";
 
 // Entities layer
 import PermaTecBot from "./permatecbot.ts";
-import { CommandModule } from "../types/command_module.d.ts";
+import { FullCommandModule } from "../types/command_module.d.ts";
 
 // Controller layer
 import DbCache from "../controller/db_cache.ts";
@@ -17,43 +17,48 @@ const eventsToAdd: ((bot: PermaTecBot) => void)[] = [];
 /** Array containig all msg filters when user responses to this bot */
 const filtersToAdd: ((bot: PermaTecBot) => void)[] = [];
 
-/** Reads all command files RECURSIVELY on command folder name from from config.json */ //Local Method
-async function loadCommandsAndEvents(dir: string) {
-  //First check linux filesytem then win-style
-  const folderName = dir.split("\\").at(-1) || dir.split("/").at(-1);
-
-  for await (const inner of Deno.readDir(dir)) {
-    if (inner.isFile && inner.name.endsWith(".ts")) {
-      try {
-        const modPath = `./${folderName}/` + inner.name;
-
-        const commandModule = new (
-          await import(modPath)
-        ).default() as CommandModule;
-
-        if (commandModule.command) commandsToAdd.push(commandModule.command);
-
-        if (commandModule.events) eventsToAdd.push(commandModule.events);
-
-        if (commandModule.filter) filtersToAdd.push(commandModule.filter);
-      } catch (err) {
-        console.error(`Error loading module ${inner.name}:`, err);
-      }
-    }
-  }
-}
-
 /**
  * Sets all commands declared in 'Commands' folder to main "PermaTecBot"
  * @param bot PermaTec Bot to add all commands
  */
 async function setupAllFuncionalityBot(bot: PermaTecBot) {
-  const dir = path.resolve(Deno.cwd(), DbCache.Config.CommandsPath);
-  await loadCommandsAndEvents(dir);
+  // const dir = path.resolve("src", "core", "commands");
+  // await loadCommandsAndEvents(dir);
+
+  //Get commands folder (absolute)
+  const absPath = path.resolve(DbCache.Config.CommandsPath);
+  await loadCommands(absPath);
 
   commandsToAdd.forEach((setCommandOn) => setCommandOn(bot));
   eventsToAdd.forEach((setEventOn) => setEventOn(bot));
   filtersToAdd.forEach((setFilterOn) => setFilterOn(bot));
+}
+
+async function loadCommands(absCommandFolderPath: string) {
+  for (const inner of Deno.readDirSync(absCommandFolderPath)) {
+    if (inner.isFile && inner.name.endsWith(".ts")) {
+      const absFilePath = path.join(absCommandFolderPath, inner.name);
+
+      //Use absPath and add the files name with extension
+      //Using file:/// to not use relative paths from this file (used by default)
+      const mod = new (
+        await import("file:///" + absFilePath)
+      ).default() as FullCommandModule;
+
+      //Import default class and then apply to bot (store them in arrays first)
+      if (mod.command) commandsToAdd.push(mod.command);
+      if (mod.events) eventsToAdd.push(mod.events);
+      if (mod.filter) filtersToAdd.push(mod.filter);
+      console.log(
+        "Command: " + inner.name + " loaded from " +
+          path.basename(absCommandFolderPath),
+      );
+    }
+
+    if (inner.isDirectory) {
+      await loadCommands(path.join(absCommandFolderPath, inner.name));
+    }
+  }
 }
 
 export { setupAllFuncionalityBot };

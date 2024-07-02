@@ -25,8 +25,4 @@ export default class Status implements CommandModule {
       }, "foxxymc.tech");
     });
   }
-
-  events() {}
-
-  filter() {}
 }

@@ -12,7 +12,7 @@ export default class Query {
     const todaysPubFound = DbSqlite.QueryWithParams<Publication>(
       "SELECT * FROM Publication WHERE Day = ? LIMIT 1",
       [todayDay]
-    )[0];
+    );
 
     if (!todaysPubFound) return { found: false, day: 0, message: "", imgs: [] };
 

@@ -55,6 +55,7 @@ export default class Subscriptions {
 
   static exists(idChat: number): boolean {
     let exists;
+
     try {
       exists = DbSqlite.QueryWithParams<{ ChatID: number }>(
         "SELECT ChatID FROM Subscription WHERE ChatID = ?;",

@@ -12,7 +12,13 @@
       "cwd": "${workspaceFolder}",
       "env": {},
       "runtimeExecutable": "C:\\Users\\itan_\\scoop\\shims\\deno.EXE",
-      "runtimeArgs": ["run", "--inspect-wait", "--allow-all", "--allow-env"],
+      "runtimeArgs": [
+        "run",
+        "--inspect-wait",
+        "--allow-all",
+        "--allow-env",
+        "--unstable"
+      ],
       "attachSimplePort": 9229
     }
   ]

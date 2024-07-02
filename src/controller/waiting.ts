@@ -1,4 +1,4 @@
-import { Context } from "npm:grammy";
+import { Context } from "https://deno.land/x/grammy@v1.25.2/mod.ts";
 import DbCache from "./db_cache.ts";
 
 const lastSubscriptionTime: Record<number, number> = {};
